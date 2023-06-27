@@ -16,11 +16,12 @@ from .instaloadercontext import InstaloaderContext
 from .nodeiterator import FrozenNodeIterator, NodeIterator
 from .sectioniterator import SectionIterator
 
-PostSidecarNode = namedtuple('PostSidecarNode', ['is_video', 'display_url', 'video_url'])
+PostSidecarNode = namedtuple('PostSidecarNode', ['is_video', 'display_url', 'video_url', 'video_view_count'])
 PostSidecarNode.__doc__ = "Item of a Sidecar Post."
 PostSidecarNode.is_video.__doc__ = "Whether this node is a video."
 PostSidecarNode.display_url.__doc__ = "URL of image or video thumbnail."
 PostSidecarNode.video_url.__doc__ = "URL of video or None."
+PostSidecarNode.video_view_count.__doc__ = "Count of views if node is a video or None"
 
 PostCommentAnswer = namedtuple('PostCommentAnswer', ['id', 'created_at_utc', 'text', 'owner', 'likes_count'])
 PostCommentAnswer.id.__doc__ = "ID number of comment."
@@ -359,7 +360,8 @@ class Post:
                         except (InstaloaderException, KeyError, IndexError) as err:
                             self._context.error(f"Unable to fetch high quality image version of {self}: {err}")
                     yield PostSidecarNode(is_video=is_video, display_url=display_url,
-                                          video_url=node['video_url'] if is_video else None)
+                                          video_url=node['video_url'] if is_video else None,
+                                          video_view_count=node['video_view_count'] if is_video else None)
 
     @property
     def caption(self) -> Optional[str]:
